@@ -16,3 +16,8 @@ variable "instance_type"{
 variable "server_name"{
   type = string
 }
+variable "bucket"{
+  type = string
+  default = "31367900089ß9ßß"
+
+}
