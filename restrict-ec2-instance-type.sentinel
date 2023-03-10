@@ -1,0 +1,26 @@
+# This policy uses the Sentinel tfplan/v2 import to require that
+# all EC2 instances have instance types from an allowed list
+
+# Import common-functions/tfplan-functions/tfplan-functions.sentinel
+# with alias "plan"
+import "tfplan/v2" as tfplan
+
+mandatory_tags = [
+  "Name",
+]
+# Allowed EC2 Instance Types
+# Include "null" to allow missing or computed values
+allowed_types = ["t2.small", "t2.medium", "t2.micro"]
+
+# Get all EC2 instances
+allEC2Instances = plan.find_resources("aws_instance")
+
+instance_type_allowed = rule{
+  all ec2instances as_, instances{
+    instance.change.after.instance_type in allowed_types
+  }
+
+# Main rule
+main = rule {
+  (instance_type_allowed) else true
+}
