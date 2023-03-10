@@ -15,6 +15,10 @@ allowed_types = ["t2.small", "t2.medium", "t2.micro"]
 # Get all EC2 instances
 allEC2Instances = plan.find_resources("aws_instance")
 
+ec2_instances = filter tfplan.resource_changes as_, rc{
+  rc.type is "aws_instance" and
+     (rc.change.actions contains "create" or rc.change.action is ["update"])
+}
 instance_type_allowed = rule{
   all ec2instances as_, instances{
     instance.change.after.instance_type in allowed_types
